@@ -1,15 +1,23 @@
+#include <Servo.h>
+
 
 void setup() {
   Serial.begin(9600);
-  // initMoteurs();
+  initMoteurs();
 }
 
 void loop() {
-  delay(1000);
+  // testIR();
+  // testMoteur();
+
   rampeContraste();
   affichageCapteur();
-  if (sousSeuil(0) || sousSeuil(1) || sousSeuil(2)) {
-    Serial.println("GO VROUM VROUM !!!!!!");
-    // goVroumVroum();
+  char vM1 = 255, vM2 = 255;
+  if (sousSeuil(0)) {
+    vM2 = 0;
   }
+  if (sousSeuil(2)) {
+    vM1 = 0;
+  }
+  avancer(vM1, vM2);
 }

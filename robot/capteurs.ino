@@ -1,11 +1,15 @@
-#define IR1 2
-#define IR2 3
-#define IR3 4
+// moteur sur pin 4/5/6/7 (d'apres doc)
+// donc si capteur sur pin 4, moteur devient vibreur
+
+#define IR1 11
+#define IR2 12
+#define IR3 13
 
 #define NBCAP 3
+#define MAXITE 1000
 
 int IRs[NBCAP] = {IR1, IR2, IR3};
-int seuil[NBCAP] = {300, 200, 80};
+int seuil[NBCAP] = {300, 200, 100};
 int valeurs[NBCAP];
 
 int contraste(int iIR) {
@@ -16,33 +20,46 @@ int contraste(int iIR) {
   pinMode(ir, INPUT);
   digitalWrite(ir, LOW);
   long t_in = micros();
-  while (digitalRead(ir) == HIGH){
-    ;
+  int ite = 0;
+  while (digitalRead(ir) == HIGH && ite < MAXITE){
+    ite++;
   }
   long t_out = micros();
 
-  return t_out - t_in;
+  if (ite == MAXITE) {
+    return 999;
+  } return t_out - t_in;
 }
 
-void rampeContraste(){
+void rampeContraste(void){
   for (int iIR = 0; iIR < NBCAP; iIR++) {
     valeurs[iIR] = contraste(iIR);    
   }
 }
 
 bool sousSeuil(int iIR){
-  // bool activation[NBCAP];
-  // for (int iIR = 0; iIR < NBCAP; iIR++) {
-  //   activation[iIR] = valeurs[iIR] <= seuil[iIR];    
-  // }
-  return valeurs[iIR] <= seuil[iIR];
+  return valeurs[iIR] > seuil[iIR];
 }
 
-void affichageCapteur() {
-  Serial.print("IR 1 : ");
-  Serial.print(valeurs[0]);  
-  Serial.print(" | IR 2 : ");
-  Serial.print(valeurs[1]);
-  Serial.print(" | IR 3 : ");
-  Serial.println(valeurs[2]);
+void affichageCapteur(void) {
+  for (int i = 0; i < NBCAP; i++) {
+    Serial.print("| IR ");
+    Serial.print(i);
+    Serial.print(" (");
+    Serial.print(seuil[i]);
+    Serial.print("): ");
+    Serial.print(valeurs[i]);  
+  } Serial.println("");
+}
+
+void testIR(void) {
+  delay(1000);
+  rampeContraste();
+  affichageCapteur();
+  for (int i = 0; i < 3; i++) {
+    if (sousSeuil(i)) {
+      Serial.print(i+1);
+      Serial.println(" -> GO VROUM VROUM !!!");
+    }
+  }
 }
