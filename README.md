@@ -8,7 +8,8 @@ Site : https://secil.univ-tlse3.fr/ontheroadagain/
 
 
 # A faire :
-* trouver un bon seuil
-* activer les moteurs quand le seuil est depasse
-* faire en sorte que le robot tourne dans le bon sens avec la bonne inclinaison
 * faire le chassis
+* maximiser la vitesse
+* faire rouler le robot
+* trouver les points faibles du robot
+* tester sur un circuit + ou - complexe
