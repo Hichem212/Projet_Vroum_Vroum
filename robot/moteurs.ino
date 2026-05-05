@@ -4,6 +4,8 @@
 #define M2 4  
 
 #define MAXSPD 255
+#define OFFSETM1 0.8
+#define OFFSETM2 1.0
 
 int cplMoteur[2][2] = {{E1, M1}, {E2, M2}};
 
@@ -19,9 +21,11 @@ void actMoteur(int moteur[2], int vitesse, int sens) {
 }
 
 void avancer(char vM1, char vM2) {
-  actMoteur(cplMoteur[0], vM1, LOW);
-  actMoteur(cplMoteur[1], vM2, HIGH);
-  delay(30);
+  vM1 = (char)((float)vM1 * OFFSETM1);
+  vM2 = (char)((float)vM2 * OFFSETM2);
+  actMoteur(cplMoteur[0], vM1, HIGH);
+  actMoteur(cplMoteur[1], vM2, LOW);
+  delay(50);
 }
 
 void testMoteur(void) {

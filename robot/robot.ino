@@ -1,5 +1,6 @@
 #include <Servo.h>
 
+#define VITNORM 140
 
 void setup() {
   Serial.begin(9600);
@@ -12,12 +13,12 @@ void loop() {
 
   rampeContraste();
   affichageCapteur();
-  char vM1 = 255, vM2 = 255;
+  char vM1 = VITNORM, vM2 = VITNORM;
   if (sousSeuil(0)) {
-    vM2 = 0;
+    vM1 = 0;
   }
   if (sousSeuil(2)) {
-    vM1 = 0;
+    vM2 = 0;
   }
   avancer(vM1, vM2);
 }
