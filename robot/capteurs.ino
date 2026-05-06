@@ -9,9 +9,10 @@
 #define MAXITE 1000
 
 int IRs[NBCAP] = {IR1, IR2, IR3};
-int seuil[NBCAP] = {300, 200, 100};
+int seuil[NBCAP] = {200, 200, 200};
 int valeurs[NBCAP];
 
+// renvoie le contraste trouve par le capteur iIR
 int contraste(int iIR) {
   int ir = IRs[iIR];
   pinMode(ir, OUTPUT);
@@ -31,14 +32,28 @@ int contraste(int iIR) {
   } return t_out - t_in;
 }
 
+// trouve le contraste pour tout les capteurs
 void rampeContraste(void){
   for (int iIR = 0; iIR < NBCAP; iIR++) {
     valeurs[iIR] = contraste(iIR);    
   }
 }
 
+// indique si le contraste du capteur iIr est sous le seuil, cad si le capteur n'est pas sur la ligne
 bool sousSeuil(int iIR){
   return valeurs[iIR] > seuil[iIR];
+}
+
+// renvoie le nouvel etat du robot (lit automatiquement les contrastes)
+Etat nouvEtat(void){
+  Etat e = ARRET;
+  rampeContraste();
+  if (!sousSeuil(1)) { // si IR2 est sur ligne
+    e = TOUT_DROIT;
+  } else if (sousSeuil(0) && sousSeuil(1) && sousSeuil(2)) {
+    e = SANS_LIGNE;
+  }
+  return e;
 }
 
 void affichageCapteur(void) {
@@ -59,7 +74,7 @@ void testIR(void) {
   for (int i = 0; i < 3; i++) {
     if (sousSeuil(i)) {
       Serial.print(i+1);
-      Serial.println(" -> GO VROUM VROUM !!!");
+      Serial.println(" -> sous seuil");
     }
   }
 }
