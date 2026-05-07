@@ -44,14 +44,24 @@ bool sousSeuil(int iIR){
   return valeurs[iIR] > seuil[iIR];
 }
 
-// renvoie le nouvel etat du robot (lit automatiquement les contrastes)
-Etat nouvEtat(void){
+// Renvoie le nouvel etat du robot (lit automatiquement les contrastes)
+//
+// -Delta est le delay entre le prochain calcul d'etat
+Etat nouvEtat(int* delta){
   Etat e = ARRET;
   rampeContraste();
   if (!sousSeuil(1)) { // si IR2 est sur ligne
     e = TOUT_DROIT;
+    *delta = 500;
   } else if (sousSeuil(0) && sousSeuil(1) && sousSeuil(2)) {
     e = SANS_LIGNE;
+    *delta = 500;
+  } else if (!sousSeuil(0) && sousSeuil(1)) {
+    e = VIRAGE_DROIT;
+    *delta = 100;
+  } else if (!sousSeuil(2) && sousSeuil(1)) {
+    e = VIRAGE_GAUCHE;
+    *delta = 100;
   }
   return e;
 }
