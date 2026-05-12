@@ -3,7 +3,6 @@
 #define E2 5
 #define M2 4  
 
-#define MAXSPD 255
 #define OFFSETM1 0.75
 #define OFFSETM2 1.0
 
