@@ -1,8 +1,9 @@
 // #define DEBUG
 
-#define VITVIRA 0//80
-#define MAXSPD 140//255
+#define MINSPD 100
+#define MAXSPD 140
 #define PAS 10
+#define DELTA 50 
 
 unsigned long t;
 int vM1, vM2;
@@ -30,62 +31,51 @@ void setup() {
   etatPrecedent = NULL;
   etatCourant = TOUT_DROIT;
   t = 0;
-  vM1 = MAXSPD;
-  vM2 = MAXSPD;
 }
 
-// met a jour etat et affiche les valeurs des capteurs
+// met a jour etat et affiche les infos du robot si en mode debug
 void actuInfos(void) {
   #ifdef DEBUG
+  Serial.print(etatPrecedent);
+  Serial.print(" | ");
   Serial.print(etatCourant);
   affichageCapteur();
   #endif
   Etat temp = etatCourant;
   etatCourant = nouvEtat();
   if (etatCourant != temp) {
-    t = millis();
     etatPrecedent = temp;
   }
 }
 
-// code pour robot dans etat TOUT_DROIT
-void toutDoit(void) {
-  vM1 = min(vM1+PAS, MAXSPD);
-  vM2 = min(vM2+PAS, MAXSPD);
+// programme de deplacement du robot lent mais robuste,
+// inpire du deplacement des chenilles des vehicules lent (ex: tank)
+void chenille(void) {
+  actuInfos();
+  if (etatCourant == TOUT_DROIT) {
+    avancer(MAXSPD, MAXSPD, true);
+  } else if (etatCourant == VIRAGE_GAUCHE || (etatCourant == SANS_LIGNE && etatPrecedent == VIRAGE_GAUCHE)) {
+    rotation(MINSPD, MINSPD, GAUCHE);  
+  } else if (etatCourant == VIRAGE_DROIT || (etatCourant == SANS_LIGNE && etatPrecedent == VIRAGE_DROIT)) {
+    rotation(MINSPD, MINSPD, DROITE);
+  } else {
+    avancer(MAXSPD, MAXSPD, true);
+  }
 }
 
-// code pour robot dans etat virage gauche/droit
-void virage(Direction direction) {
-  // moteur principale = minimum moyenne entre la vit max et vit debut virage
-  int v1 = max(vM1, (MAXSPD+VITVIRA)/2);
-  int v2 = max(vM2, (MAXSPD+VITVIRA)/2);
-  if (direction == GAUCHE) {
-    v1 = VITVIRA;
-  } else { // direction == DROITE
-    v2 = VITVIRA;
-  }
-  vM1 = v1;
-  vM2 = v2;
+void algoDepPID(void) {
+  rampeContraste();
+  calculPID();
+  avancer(vM1, vM2, true);
 }
 
 void loop() {
-  actuInfos();
-  #ifndef DEBUG
-  // bool av = true;
-  switch (etatCourant) {
-    case TOUT_DROIT: 
-      toutDoit();
-      break;
-    case VIRAGE_GAUCHE:
-      virage(GAUCHE);
-      break;
-    case VIRAGE_DROIT:
-      virage(DROITE);
-      break;
-    default:
-      // av = false;
-      break;
-  }
-  avancer(vM1, vM2, true);
+  #ifdef DEBUG
+  // calculPID();
+  // avancer(vM1, vM2, true);
+  // avancer(MAXSPD, MAXSPD, true);
+  // rotation(MINSPD, MINSPD, DROITE);
+  #else
+  chenille();
   #endif
 }

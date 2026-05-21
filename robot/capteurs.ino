@@ -1,6 +1,3 @@
-// moteur sur pin 4/5/6/7 (d'apres doc)
-// donc si capteur sur pin 4, moteur devient vibreur
-
 #define IR1 11
 #define IR2 12
 #define IR3 13
@@ -9,7 +6,7 @@
 #define MAXITE 1000
 
 int IRs[NBCAP] = {IR1, IR2, IR3};
-int seuil[NBCAP] = {200, 200, 200};
+int seuil[NBCAP] = {200, 220, 200};
 int valeurs[NBCAP];
 
 // renvoie le contraste trouve par le capteur iIR
@@ -41,15 +38,14 @@ void rampeContraste(void){
 
 // indique si le contraste du capteur iIr est sous le seuil, cad si le capteur n'est pas sur la ligne
 bool sousSeuil(int iIR){
-  return valeurs[iIR] > seuil[iIR];
+  return valeurs[iIR] < seuil[iIR];
 }
 
 // Renvoie le nouvel etat du robot (lit automatiquement les contrastes)
 Etat nouvEtat(void){
   Etat e = ARRET;
   rampeContraste();
-  if (!sousSeuil(1) && (sousSeuil(0) == sousSeuil(2))) { 
-    // si seulement IR2 est sur ligne ou si ils IR1/2/3 sur ligne
+  if (!sousSeuil(1)) { 
     e = TOUT_DROIT;
   } else if (sousSeuil(0) && sousSeuil(1) && sousSeuil(2)) {
     e = SANS_LIGNE;
@@ -61,6 +57,18 @@ Etat nouvEtat(void){
   return e;
 }
 
+// calcul l'ecart du robot par rapport a la ligne dans l'interval [-50; 50],
+// < 0 -> trop a gauche
+// > 0 -> trop a droite
+int ecartLigne(void) {
+  return 50-100*(-valeurs[0]+valeurs[2])/(valeurs[0]+valeurs[1]+valeurs[2]);
+}
+
+// =======================================
+//        DEBUG
+// =======================================
+
+// affiche les valeurs des capteurs
 void affichageCapteur(void) {
   for (int i = 0; i < NBCAP; i++) {
     Serial.print("| IR ");
@@ -72,6 +80,7 @@ void affichageCapteur(void) {
   } Serial.println("");
 }
 
+// fonction de tests pour les capteurs
 void testIR(void) {
   delay(1000);
   rampeContraste();
