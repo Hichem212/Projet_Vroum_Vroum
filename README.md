@@ -1,15 +1,14 @@
-# Projet_Vroum_Vroum
+# Projet Vroum Vroum
 
-Code source du robot dans le dossier robot
+Code source d'un robot suiveur de ligne, avec une 3 capteurs IR Pololu et 2 moteurs
 
-Dossier capteurIR et moteur sont pour tester les pieces.
+Site du projet : https://secil.univ-tlse3.fr/ontheroadagain/
 
-Site : https://secil.univ-tlse3.fr/ontheroadagain/
-
+# Fonctionnement :
+2 modes de deplacements,
+* **Mode chenille** : s'inspire du systeme de rotation des vehicules lent comme les tanks pour tourner. Le robot est donc lent mais robuste dans les differents circuits.
+* **Systeme PID** : en cours de developpement, systeme auto equilibrant, rapide mais complexe.
 
 # A faire :
-* faire le chassis
 * maximiser la vitesse
-* faire rouler le robot
-* trouver les points faibles du robot
-* tester sur un circuit + ou - complexe
+* faire fonctionner l'algo du PID
