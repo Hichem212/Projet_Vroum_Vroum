@@ -1,14 +1,14 @@
 #define E1 6
 #define M1 7
 #define E2 5
-#define M2 4  
+#define M2 4
 
-#define OFFSETM1 0.8
+#define OFFSETM1 0.85
 #define OFFSETM2 1.0
 
-#define Kp 1
+#define Kp 1.36
+#define Kd 10
 #define Ki 0
-#define Kd 0
 int ep = 0;
 int sum = 0;
 
@@ -22,14 +22,13 @@ int cplMoteur[2][2] = {{E1, M1}, {E2, M2}};
 void initMoteurs() {
   pinMode(M1, OUTPUT);
   pinMode(M2, OUTPUT);
-  vM1 = (MINSPD+MAXSPD)/2;
-  vM2 = vM2;
+  restetVit();
 }
 
 // reinitialise les vitesses des moteurs a la vitesse minimale
 void restetVit(void) {
-  vM1 = MINSPD;
-  vM2 = MINSPD;
+  vM1 = DROISPD;
+  vM2 = DROISPD;
 }
 
 // incremente de v1 et v2 les vitesses des moteurs vM1 et vM2 (dans l'intervalle [MINSPD; MAXSPD])
@@ -74,6 +73,18 @@ int calculPID(void) {
 // =======================================
 //        DEBUG
 // =======================================
+
+void afficherVitesse(void) {
+  Serial.print("vM1 : ");
+  Serial.print(vM1);
+  Serial.print("| vM2 : ");
+  Serial.print(vM2);
+  Serial.print("| lst err : ");
+  Serial.print(lstErr[(indiceErr-1)%MAXERRPID]);
+  Serial.print("| ep : ");
+  Serial.print(lstErr[(indiceErr-2)%MAXERRPID]);
+  Serial.println("");
+}
 
 // fonction de test pour les moteurs du robot
 void testMoteur(void) {

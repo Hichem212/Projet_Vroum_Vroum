@@ -57,16 +57,27 @@ Etat nouvEtat(void){
   return e;
 }
 
-// calcul l'ecart du robot par rapport a la ligne dans l'interval [-50; 50],
+// calcul l'ecart du robot par rapport a la ligne dans l'interval [-100; 100],
+// (lit automatiquement les contrastes),
 // < 0 -> trop a gauche
 // > 0 -> trop a droite
 int ecartLigne(void) {
-  return 50-100*(-valeurs[0]+valeurs[2])/(valeurs[0]+valeurs[1]+valeurs[2]);
+  rampeContraste();
+  return 100L*(valeurs[2]-valeurs[0])/(valeurs[2]+valeurs[0]);
 }
 
 // =======================================
 //        DEBUG
 // =======================================
+
+void afficherEtat(void) {
+  Serial.print("Etat precedent : ");
+  Serial.print(etatPrecedent);
+  Serial.print(" | Etat courant : ");
+  Serial.print(etatCourant);
+
+  Serial.println("");
+}
 
 // affiche les valeurs des capteurs
 void affichageCapteur(void) {
@@ -77,7 +88,8 @@ void affichageCapteur(void) {
     Serial.print(seuil[i]);
     Serial.print("): ");
     Serial.print(valeurs[i]);  
-  } Serial.println("");
+  } 
+  Serial.println("");
 }
 
 // fonction de tests pour les capteurs

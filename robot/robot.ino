@@ -1,9 +1,18 @@
 // #define DEBUG
+// #define PID
 
-#define MINSPD 100
-#define MAXSPD 140
-#define PAS 10
-#define DELTA 50 
+#ifdef PID
+#define MINSPD 80
+#define VIRASPD 125
+#define DROISPD 180
+#define MAXSPD 250
+#else
+#define MINSPD 120//100
+#define MAXSPD 160//140
+#define DROISPD (MAXSPD+MINSPD)/2
+#endif
+#define DELTA 10 // 100 Hz
+
 
 unsigned long t;
 int vM1, vM2;
@@ -33,14 +42,8 @@ void setup() {
   t = 0;
 }
 
-// met a jour etat et affiche les infos du robot si en mode debug
+// met a jour etat
 void actuInfos(void) {
-  #ifdef DEBUG
-  Serial.print(etatPrecedent);
-  Serial.print(" | ");
-  Serial.print(etatCourant);
-  affichageCapteur();
-  #endif
   Etat temp = etatCourant;
   etatCourant = nouvEtat();
   if (etatCourant != temp) {
@@ -62,20 +65,36 @@ void chenille(void) {
     avancer(MAXSPD, MAXSPD, true);
   }
 }
-
 void algoDepPID(void) {
-  rampeContraste();
-  calculPID();
+  actuInfos();
+  // if (etatCourant == VIRAGE_DROIT || etatCourant == VIRAGE_GAUCHE || etatCourant == SANS_LIGNE) {
+   
+  // } 
+  bool ajust = t + DELTA > millis();
+  if (ajust) {
+    calculPID();
+    t = millis();
+  }
   avancer(vM1, vM2, true);
+  if (ajust) {
+    restetVit();
+  }
 }
 
 void loop() {
   #ifdef DEBUG
-  // calculPID();
-  // avancer(vM1, vM2, true);
-  // avancer(MAXSPD, MAXSPD, true);
-  // rotation(MINSPD, MINSPD, DROITE);
+  Serial.println("");
+  calculPID();
+  affichageCapteur();
+  afficherEtat();
+  afficherVitesse();
+  restetVit();
+  delay(1000);
   #else
-  chenille();
+    #ifdef PID
+    algoDepPID();
+    #else
+    chenille();
+    #endif
   #endif
 }
