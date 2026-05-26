@@ -27,20 +27,20 @@ void initMoteurs() {
 
 // reinitialise les vitesses des moteurs a la vitesse minimale
 void restetVit(void) {
-  vM1 = DROISPD;
-  vM2 = DROISPD;
+  vM1 = DROISPD_PID;
+  vM2 = DROISPD_PID;
 }
 
-// incremente de v1 et v2 les vitesses des moteurs vM1 et vM2 (dans l'intervalle [MINSPD; MAXSPD])
+// incremente de v1 et v2 les vitesses des moteurs vM1 et vM2 (dans l'intervalle [MINSPD_PID; MAXSPD_PID])
 void incrVit(int v1, int v2) {
-  vM1 = max(MINSPD, min(vM1+v1, MAXSPD));
-  vM2 = max(MINSPD, min(vM2+v2, MAXSPD));
+  vM1 = max(MINSPD_PID, min(vM1+v1, MAXSPD_PID));
+  vM2 = max(MINSPD_PID, min(vM2+v2, MAXSPD_PID));
 }
 
 // actionne un moteur en envoyant sa vitesse et son sens aux pins du moteur
 void actMoteur(int moteur[2], int vitesse, int sens) {
-  if (vitesse > MAXSPD) 
-    vitesse = MAXSPD;
+  if (vitesse > MAXSPD_PID) 
+    vitesse = MAXSPD_PID;
   digitalWrite(moteur[1],sens);
   analogWrite(moteur[0], vitesse);
 }
@@ -93,23 +93,23 @@ void testMoteur(void) {
     avancer(0, 0, true);
   }
   Serial.println("moteurs progressif");
-  for (int i = 0; i < MAXSPD; i++) {
+  for (int i = 0; i < MAXSPD_PID; i++) {
     avancer(i, i, true);
   }
-  for (int i = 0; i < MAXSPD; i++) {
-    avancer(MAXSPD-i, MAXSPD-i, true);
+  for (int i = 0; i < MAXSPD_PID; i++) {
+    avancer(MAXSPD_PID-i, MAXSPD_PID-i, true);
   }
   Serial.println("moteur 0 et 1 a vMax");
   for (int i = 0; i < 100; i++) {
-    avancer(MAXSPD, MAXSPD, true);
+    avancer(MAXSPD_PID, MAXSPD_PID, true);
   }
   Serial.println("moteur 0 a vMax");
   for (int i = 0; i < 100; i++) {
-    avancer(MAXSPD, 0, true);
+    avancer(MAXSPD_PID, 0, true);
   }
   Serial.println("moteur 1 a vMax");
   for (int i = 0; i < 100; i++) {
-    avancer(0, MAXSPD, true);
+    avancer(0, MAXSPD_PID, true);
   }
   
 }

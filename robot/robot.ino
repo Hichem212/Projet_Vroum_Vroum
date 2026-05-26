@@ -1,20 +1,18 @@
 // #define DEBUG
-// #define PID
 
-#ifdef PID
-#define MINSPD 80
-#define VIRASPD 125
-#define DROISPD 180
-#define MAXSPD 250
-#else
-#define MINSPD 120//100
-#define MAXSPD 160//140
-#define DROISPD (MAXSPD+MINSPD)/2
-#endif
-#define DELTA 10 // 100 Hz
+#define MINSPD_PID 100
+#define DROISPD_PID 140
+#define MAXSPD_PID 180//250
 
+#define MINSPD_CHENILLE 100
+#define MAXSPD_CHENILLE 140
 
-unsigned long t;
+#define PERDU 500 // temps en millisecondes avant d'etre considere comme perdu
+#define RETROUVE 75 // temps en millisecondes avant d'etre considere comme retrouve
+unsigned long t_perdu = 0;
+unsigned long t_retrouve = 1; 
+bool surLigne = true;
+
 int vM1, vM2;
 
 typedef enum {
@@ -39,62 +37,80 @@ void setup() {
   initMoteurs();
   etatPrecedent = NULL;
   etatCourant = TOUT_DROIT;
-  t = 0;
 }
 
-// met a jour etat
+// met a jour etat, surLigne, la rampe de contraste
 void actuInfos(void) {
+  rampeContraste();
   Etat temp = etatCourant;
   etatCourant = nouvEtat();
   if (etatCourant != temp) {
     etatPrecedent = temp;
+    
+    if (etatCourant == SANS_LIGNE) {
+      t_perdu = millis();
+      t_retrouve = 0;
+    } else {
+      t_retrouve = millis();
+      t_perdu = 0;
+    }
   }
+
+  if (t_perdu+PERDU < millis() && !t_retrouve) {
+    surLigne = false;
+  } 
+  if (!t_perdu && t_retrouve+RETROUVE < millis()) {
+    surLigne = true;
+  }
+  
 }
 
 // programme de deplacement du robot lent mais robuste,
 // inpire du deplacement des chenilles des vehicules lent (ex: tank)
 void chenille(void) {
-  actuInfos();
   if (etatCourant == TOUT_DROIT) {
-    avancer(MAXSPD, MAXSPD, true);
+    avancer(MAXSPD_CHENILLE, MAXSPD_CHENILLE, surLigne);
   } else if (etatCourant == VIRAGE_GAUCHE || (etatCourant == SANS_LIGNE && etatPrecedent == VIRAGE_GAUCHE)) {
-    rotation(MINSPD, MINSPD, GAUCHE);  
+    rotation(MINSPD_CHENILLE, MINSPD_CHENILLE, GAUCHE);  
   } else if (etatCourant == VIRAGE_DROIT || (etatCourant == SANS_LIGNE && etatPrecedent == VIRAGE_DROIT)) {
-    rotation(MINSPD, MINSPD, DROITE);
+    rotation(MINSPD_CHENILLE, MINSPD_CHENILLE, DROITE);
   } else {
-    avancer(MAXSPD, MAXSPD, true);
+    avancer(MAXSPD_CHENILLE, MAXSPD_CHENILLE, surLigne);
   }
 }
+
+// programme de deplacement du robot rapide mais ne sait pas tourner,
+// utilise l'algorithme du PID
 void algoDepPID(void) {
-  actuInfos();
-  // if (etatCourant == VIRAGE_DROIT || etatCourant == VIRAGE_GAUCHE || etatCourant == SANS_LIGNE) {
-   
-  // } 
-  bool ajust = t + DELTA > millis();
-  if (ajust) {
-    calculPID();
-    t = millis();
-  }
-  avancer(vM1, vM2, true);
-  if (ajust) {
-    restetVit();
+  calculPID();
+  avancer(vM1, vM2, surLigne);
+  restetVit();
+}
+
+void goFast(void) {
+  if (etatCourant == SANS_LIGNE) {
+    chenille();
+  } else {
+    algoDepPID();
   }
 }
 
 void loop() {
+  actuInfos();
   #ifdef DEBUG
   Serial.println("");
-  calculPID();
-  affichageCapteur();
-  afficherEtat();
-  afficherVitesse();
-  restetVit();
-  delay(1000);
+  Serial.println(surLigne);
+  // Serial.println(t_perdu);
+  // Serial.println(t_retrouve);
+  // calculPID();
+  // affichageCapteur();
+  // afficherEtat();
+  // afficherVitesse();
+  // restetVit();
+  // delay(500);
   #else
-    #ifdef PID
-    algoDepPID();
-    #else
-    chenille();
-    #endif
+    // algoDepPID();
+    // chenille();
+    goFast();
   #endif
 }

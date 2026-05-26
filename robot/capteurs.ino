@@ -24,9 +24,7 @@ int contraste(int iIR) {
   }
   long t_out = micros();
 
-  if (ite == MAXITE) {
-    return 999;
-  } return t_out - t_in;
+  return t_out - t_in;
 }
 
 // trouve le contraste pour tout les capteurs
@@ -44,7 +42,6 @@ bool sousSeuil(int iIR){
 // Renvoie le nouvel etat du robot (lit automatiquement les contrastes)
 Etat nouvEtat(void){
   Etat e = ARRET;
-  rampeContraste();
   if (!sousSeuil(1)) { 
     e = TOUT_DROIT;
   } else if (sousSeuil(0) && sousSeuil(1) && sousSeuil(2)) {
@@ -62,7 +59,6 @@ Etat nouvEtat(void){
 // < 0 -> trop a gauche
 // > 0 -> trop a droite
 int ecartLigne(void) {
-  rampeContraste();
   return 100L*(valeurs[2]-valeurs[0])/(valeurs[2]+valeurs[0]);
 }
 
