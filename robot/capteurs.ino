@@ -39,21 +39,6 @@ bool sousSeuil(int iIR){
   return valeurs[iIR] < seuil[iIR];
 }
 
-// Renvoie le nouvel etat du robot (lit automatiquement les contrastes)
-Etat nouvEtat(void){
-  Etat e = ARRET;
-  if (!sousSeuil(1)) { 
-    e = TOUT_DROIT;
-  } else if (sousSeuil(0) && sousSeuil(1) && sousSeuil(2)) {
-    e = SANS_LIGNE;
-  } else if (!sousSeuil(0)) { // si le capteur droit detecte la ligne
-    e = VIRAGE_DROIT;
-  } else if (!sousSeuil(2)) { // si le capteur gauche detecte la ligne
-    e = VIRAGE_GAUCHE;
-  }
-  return e;
-}
-
 // calcul l'ecart du robot par rapport a la ligne dans l'interval [-100; 100],
 // (lit automatiquement les contrastes),
 // < 0 -> trop a gauche
@@ -65,15 +50,6 @@ int ecartLigne(void) {
 // =======================================
 //        DEBUG
 // =======================================
-
-void afficherEtat(void) {
-  Serial.print("Etat precedent : ");
-  Serial.print(etatPrecedent);
-  Serial.print(" | Etat courant : ");
-  Serial.print(etatCourant);
-
-  Serial.println("");
-}
 
 // affiche les valeurs des capteurs
 void affichageCapteur(void) {

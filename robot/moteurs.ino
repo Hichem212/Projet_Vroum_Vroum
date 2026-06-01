@@ -59,6 +59,23 @@ void rotation(int vM1, int vM2, Direction direction) {
   delay(30);
 }
 
+void retrouveLigne(void) {
+  avancer(MINSPD_CHENILLE, MINSPD_CHENILLE, true);
+  Direction dRetrouve = dernierVirage();
+  // int i = 1;
+  // unsigned long t_rota = millis(); 
+  while (etatCourant() == SANS_LIGNE) {
+    rotation(MINSPD_CHENILLE, MINSPD_CHENILLE, dRetrouve);
+    rampeContraste();
+    actuEtat();
+    // if (t_rota + ROTA*i < millis()) {
+    //   t_rota = millis();
+    //   i++;
+    //   dRetrouve = 1 - dRetrouve;
+    // }
+  }
+}
+
 // calcul du PID des roues
 int calculPID(void) {
   sum -= lstErr[indiceErr];
