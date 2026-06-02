@@ -7,8 +7,8 @@
 #define MINSPD_CHENILLE 120
 #define MAXSPD_CHENILLE 160
 
-#define PERDU 400 // temps en millisecondes avant d'etre considere comme perdu
-#define ROTA 200
+#define PERDU 500 // temps en millisecondes avant d'etre considere comme perdu
+// #define ROTA 200
 
 typedef enum {
   TOUT_DROIT,
@@ -66,7 +66,7 @@ void algoDepPID(void) {
 }
 
 // combine tout pour aller vite et etre resistant
-void goFast(void) {
+void systemCombine(void) {
   if (etatCourant() == TOUT_DROIT) {
     algoDepPID();
   } else if (etatCourant() == VIRAGE_GAUCHE || (etatCourant() == SANS_LIGNE && etatPrecedent() == VIRAGE_GAUCHE)) {
@@ -97,6 +97,6 @@ void loop() {
   #else
     // algoDepPID();
     // chenille();
-    goFast();
+    systemCombine();
   #endif
 }

@@ -1,4 +1,4 @@
-#define MAXETAT 4
+#define MAXETAT 5
 
 Etat lstEtat[MAXETAT];
 int iEtat = 0;
@@ -59,8 +59,10 @@ Direction dernierVirage(void) {
     i++;
   }
   if (lstEtat[(iEtat-i)%MAXETAT] == VIRAGE_DROIT) {
-    return DROITE;
-  } 
+    return GAUCHE;
+  } else if (lstEtat[(iEtat-i)%MAXETAT] == VIRAGE_GAUCHE) {
+    return DROITE;  
+  }
   return GAUCHE;
 }
 
