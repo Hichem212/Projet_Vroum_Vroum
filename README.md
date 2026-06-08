@@ -11,11 +11,11 @@ Site du projet : https://secil.univ-tlse3.fr/ontheroadagain/
 * **Systeme conmbiné** : combine le système PID et chenille avec systeme pour retrouver la ligne "intelligent". C'est le mode utilise pour le robot durant la course finale
 
 # Systeme de sauvetage :
-Un algorithme pour retrouver la ligne est implementer mais pas utilise, la valeur utilisee normalement est de 400ms
+Un algorithme pour retrouver la ligne est implemente mais pas utilise, la valeur utilisee normalement est de 400ms
 * des qu'il n'est pas dans un cas pour tourner et qu'il n'arrive pas a detecter la ligne, alors il avance un moment avant de se considerer comme perdu
 * des qu'il est perdu, il recul jusqu'a trouver la ligne, puis soit il recuprere le dernier virage lu, sinon il tourne la ou le contraste est le plus haut
 
-# A faire :
-* optimiser l'algo du PID
+# Evolution possible :
+* faire un vrai algo PID
 * modifier la roue libre pour avoir un servo moteur ou une ball caster
 * ajouter des capteurs pour agrandir le champ de vision
