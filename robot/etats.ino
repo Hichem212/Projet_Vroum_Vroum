@@ -63,7 +63,7 @@ Direction dernierVirage(void) {
   } else if (lstEtat[(iEtat-i)%MAXETAT] == VIRAGE_GAUCHE) {
     return DROITE;  
   }
-  return GAUCHE;
+  return (Direction)(valeurs[0]>valeurs[3]);
 }
 
 // =======================================

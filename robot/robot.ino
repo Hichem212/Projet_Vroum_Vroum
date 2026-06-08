@@ -7,7 +7,7 @@
 #define MINSPD_CHENILLE 120
 #define MAXSPD_CHENILLE 160
 
-#define PERDU 500 // temps en millisecondes avant d'etre considere comme perdu
+#define PERDU 0//500 // temps en millisecondes avant d'etre considere comme perdu
 // #define ROTA 200
 
 typedef enum {
