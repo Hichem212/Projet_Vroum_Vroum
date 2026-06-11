@@ -6,7 +6,8 @@
 #define MAXITE 1000
 
 int IRs[NBCAP] = {IR1, IR2, IR3};
-int seuil[NBCAP] = {200, 220, 200};
+// int seuil[NBCAP] = {200, 220, 200};
+int seuil[NBCAP] = {190, 210, 190};
 int valeurs[NBCAP];
 
 // renvoie le contraste trouve par le capteur iIR

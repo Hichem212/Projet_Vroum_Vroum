@@ -62,6 +62,7 @@ void rotation(int vM1, int vM2, Direction direction) {
 void retrouveLigne(void) {
   // avancer(MINSPD_CHENILLE, MINSPD_CHENILLE, true);
   Direction dRetrouve = dernierVirage();
+  rotation(MINSPD_CHENILLE, MINSPD_CHENILLE, dRetrouve);
   while (etatCourant() == SANS_LIGNE) {
     rotation(MINSPD_CHENILLE, MINSPD_CHENILLE, dRetrouve);
     rampeContraste();

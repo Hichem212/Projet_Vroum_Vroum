@@ -5,7 +5,7 @@
 #define MAXSPD_PID 180//250
 
 #define MINSPD_CHENILLE 120
-#define MAXSPD_CHENILLE 160
+#define MAXSPD_CHENILLE 170
 
 #define PERDU 0//500 // temps en millisecondes avant d'etre considere comme perdu
 // #define ROTA 200
